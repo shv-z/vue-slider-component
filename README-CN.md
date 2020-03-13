@@ -8,10 +8,7 @@
 
 [English](https://github.com/NightCatSama/vue-slider-component/blob/master/README.md) | 简体中文
 
-如果你不需要新的特性，也可以使用更稳定的版本 [v2.x](https://github.com/NightCatSama/vue-slider-component/tree/v2)
-
-## ✨ 新特性(v3.x)
-- 🔧 修复了[异常](https://github.com/NightCatSama/vue-slider-component/tree/v2#exceptions)
+## ✨ 新特性
 - 🍖 更加可定制化
 - 👗 多种样式主题
 - 🐳 支持更多的滑块
@@ -23,7 +20,7 @@
 
 在线文档：<https://nightcatsama.github.io/vue-slider-component/#/zh-CN/>
 
-在线例子：<https://jsfiddle.net/NightCatSama/2xy72dod/10339/>
+在线例子：<https://jsfiddle.net/NightCatSama/2xy72dod/10520/>
 
 
 ## 🎯 安装
@@ -61,10 +58,6 @@ export default {
 每个版本的[更新日志](https://github.com/NightCatSama/vue-slider-component/blob/master/CHANGELOG.md)。
 
 ## 支持
-
-issues 可由任何人资助，资金将分配给贡献者和维护者。
-
-[![issuehunt](https://cdn.jsdelivr.net/gh/BoostIO/issuehunt-materials/v1/issuehunt-button-v1.svg)](https://issuehunt.io/r/NightCatSama/vue-slider-component)
 
 如果你喜欢这个组件，你也可以请我喝[咖啡](https://imgchr.com/i/ErWs1J) ☕️ 。
 

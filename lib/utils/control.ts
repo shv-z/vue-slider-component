@@ -26,9 +26,9 @@ type ERROR_MESSAGE = { [key in ERROR_TYPE]: string }
 export const ERROR_MSG: ERROR_MESSAGE = {
   [ERROR_TYPE.VALUE]: 'The type of the "value" is illegal',
   [ERROR_TYPE.INTERVAL]:
-    'The prop "interval" is invalid, "(max - min)" cannot be divisible by "interval"',
-  [ERROR_TYPE.MIN]: 'The "value" cannot be less than the minimum.',
-  [ERROR_TYPE.MAX]: 'The "value" cannot be greater than the maximum.',
+    'The prop "interval" is invalid, "(max - min)" must be divisible by "interval"',
+  [ERROR_TYPE.MIN]: 'The "value" must be greater than or equal to the "min".',
+  [ERROR_TYPE.MAX]: 'The "value" must be less than or equal to the "max".',
   [ERROR_TYPE.ORDER]:
     'When "order" is false, the parameters "minRange", "maxRange", "fixed", "enabled" are invalid.',
 }
@@ -448,6 +448,23 @@ export default class Control {
     }
   }
 
+  /**
+   * Calculate the distance of the range
+   * @param range number
+   */
+  getRangeDir(range: number): number {
+    return range
+      ? new Decimal(range)
+          .divide(
+            new Decimal(this.data ? this.data.length - 1 : this.max)
+              .minus(this.data ? 0 : this.min)
+              .toNumber(),
+          )
+          .multiply(100)
+          .toNumber()
+      : 100
+  }
+
   private emitError(type: ERROR_TYPE) {
     if (this.onError) {
       this.onError(type, ERROR_MSG[type])
@@ -496,14 +513,20 @@ export default class Control {
     return 100 / this.total
   }
 
+  private cacheRangeDir: { [key: string]: number } = {}
+
   // The minimum distance between the two sliders
   get minRangeDir(): number {
-    return this.minRange ? this.minRange * this.gap : 0
+    if (this.cacheRangeDir[this.minRange]) {
+      return this.cacheRangeDir[this.minRange]
+    }
+    return (this.cacheRangeDir[this.minRange] = this.getRangeDir(this.minRange))
   }
 
   // Maximum distance between the two sliders
   get maxRangeDir(): number {
-    return this.maxRange ? this.maxRange * this.gap : 100
+    if (this.cacheRangeDir[this.maxRange]) return this.cacheRangeDir[this.maxRange]
+    return (this.cacheRangeDir[this.maxRange] = this.getRangeDir(this.maxRange))
   }
 
   private getDotRange(index: number, key: 'min' | 'max', defaultValue: number): number {

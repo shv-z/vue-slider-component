@@ -76,7 +76,7 @@
 
 ### direction
 
-- **Type**: `'ltr' | 'rtl' | 'ttb' | 'bbt'`
+- **Type**: `'ltr' | 'rtl' | 'ttb' | 'btt'`
 
 - **Default**: `ltr`
 
@@ -86,7 +86,7 @@
 
   `ltr` means `Left to Right`, Other similarity.
 
-  When the value is `ltr` or `rtl`, it is horizontal, and when it is `ttb` or `bbt`, it is vertical.
+  When the value is `ltr` or `rtl`, it is horizontal, and when it is `ttb` or `btt`, it is vertical.
 
   ::: warning
     In the vertical direction, you need to set the component height, otherwise it will not render properly.
@@ -162,6 +162,22 @@
 
   Whether to allow changes to values by clicking.
 
+### dragOnClick
+
+::: version
+  New in 3.0.41+
+:::
+
+- **Type**: `boolean`
+
+- **Default**: `false`
+
+- **Usage**:
+
+  Whether to allow dragging the slider when pressing the process.
+
+- **See also**: <router-link :to="$route.meta.lang + 'basics/simple?hash=dragonclick'">Common usage > DragOnClick</router-link>
+
 ### duration
 
 - **Type**: `number`
@@ -211,9 +227,9 @@
 
 ### tooltip
 
-- **Type**: `'none' | 'always' | 'focus'`
+- **Type**: `'none' | 'always' | 'hover' | 'focus' | 'active'`
 
-- **Default**: `'focus'`
+- **Default**: `'active'`
 
 - **Usage**:
 
@@ -223,7 +239,11 @@
 
   When the value is `always`, the Tooltip is always displayed;
 
+  When the value is `hover`, the Tooltip will be displayed when the slider get hover;
+
   When the value is `focus`, the Tooltip will only be displayed when the slider has focus. And when `useKeyboard` is `true`, the end of the drag will still get the focus.
+
+  When the value is `active`, the Tooltip have both `hover` and `focus`;
 
 - **See also**: <router-link :to="$route.meta.lang + 'basics/tooltip?hash=tooltip'">Tooltip > tooltip</router-link>
 
@@ -280,6 +300,30 @@
 - **Usage**:
 
   Keyboard control, when the value is `true`, the drag end slider still gets the focus.
+
+### keydownHook
+
+::: version
+  New in 3.0.33+
+:::
+
+- **Type**: `(e: KeyboardEvent) => HandleFunction | boolean`
+
+  ```ts
+  // @Param {index} Index of the active slider
+  // @Return New index
+  type HandleFunction = (index: number) => number
+  ```
+
+- **Default**: `undefined`
+
+- **Usage**:
+
+  Keyboard controlled hook function.
+
+  When the function returns `false`, the value does not change.
+
+  If `true` is returned, the [default action](https://github.com/NightCatSama/vue-slider-component/blob/master/lib/utils/index.ts) is used.
 
 ### enableCross
 
@@ -394,7 +438,7 @@
   ```ts
   interface DotOption {
     disabled: boolean
-    tooltip: 'none' | 'always' | 'focus'
+    tooltip: 'none' | 'always' | 'hover' | 'focus' | 'active'
     min: Value
     max: Value
     style: Object

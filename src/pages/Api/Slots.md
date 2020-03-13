@@ -139,6 +139,8 @@
 
   - `{number} end` End position of the progress
 
+  - `{number} index` Index of the progress (can be used in multi-progress)
+
   - `{object} style` Progress style, Contains the calculated style of the component (size, position, etc)
 
 - **Usage**:
@@ -147,7 +149,7 @@
 
   ```html
   <vue-slider v-model="value">
-    <template v-slot:process="{ start, end, style }">
+    <template v-slot:process="{ start, end, style, index }">
       <div class="vue-slider-process custom-class" :style="[style, customStyle]">
         <!-- Can add custom elements here -->
       </div>

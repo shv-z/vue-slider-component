@@ -36,7 +36,7 @@ export interface TooltipStyle {
   tooltipFocusStyle?: Styles
   tooltipDisabledStyle?: Styles
 }
-export type TooltipProp = 'none' | 'always' | 'focus'
+export type TooltipProp = 'none' | 'always' | 'focus' | 'hover' | 'active'
 export type TooltipFormatterFunc = (val: Value) => string
 export type TooltipFormatter = string | TooltipFormatterFunc
 
@@ -66,6 +66,7 @@ export type ProcessProp = boolean | ProcessFunc
 export interface Process {
   start: number
   end: number
+  index: number
   style?: Styles
 }
 

@@ -9,10 +9,7 @@
 
 English | [简体中文](https://github.com/NightCatSama/vue-slider-component/blob/master/README-CN.md)
 
-If you don't need new features, you can also use a more stable version [v2.x](https://github.com/NightCatSama/vue-slider-component/tree/v2).
-
-## ✨ New Features (v3.x)
-- 🔧 Fix [exceptions](https://github.com/NightCatSama/vue-slider-component/tree/v2#exceptions)
+## ✨ Features
 - 🍖 More customizable
 - 👗 Multiple style themes
 - 🐳 Support for more sliders
@@ -24,7 +21,7 @@ If you don't need new features, you can also use a more stable version [v2.x](ht
 
 Document: <https://nightcatsama.github.io/vue-slider-component>
 
-Live Demo：<https://jsfiddle.net/NightCatSama/2xy72dod/10339/>
+Live Demo: <https://jsfiddle.net/NightCatSama/2xy72dod/10520/>
 
 
 ## 🎯 install
@@ -62,10 +59,6 @@ export default {
 Detailed changes for each release are documented in the [release notes](https://github.com/NightCatSama/vue-slider-component/blob/master/CHANGELOG.md).
 
 ## Support
-
-Issues can be funded by anyone and the money will be distributed to contributors and maintainers.
-
-[![issuehunt](https://cdn.jsdelivr.net/gh/BoostIO/issuehunt-materials/v1/issuehunt-button-v1.svg)](https://issuehunt.io/r/NightCatSama/vue-slider-component)
 
 If you like this component, you can ask me to drink [coffee](https://www.paypal.me/nightcatsama) ☕️.
 

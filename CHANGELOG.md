@@ -1,5 +1,116 @@
 # CHANGELOG
 
+## v3.1.1
+
+> `2019-02-14`
+
+### 🐞 Bug Fixes
+  - `onValueChanged` may be called before control is created. [#436](https://github.com/NightCatSama/vue-slider-component/pull/436)
+
+## v3.1.0
+
+> `2019-12-09`
+
+### 🎉 Feature
+  - `tooltip` supports `hover` and `active` parameter. [#423](https://github.com/NightCatSama/vue-slider-component/issues/423)
+  - `tooltip` default parameters changed from `focus` to `active`. [document](https://nightcatsama.github.io/vue-slider-component/#/api/props?hash=tooltip)
+
+## v3.0.46
+
+> `2019-12-08`
+
+### 🐞 Bug Fixes
+  - Cannot drag when included and lazy are both equal to true. [#421](https://github.com/NightCatSama/vue-slider-component/issues/421)
+
+## v3.0.45
+
+> `2019-12-07`
+
+### 🐞 Bug Fixes
+  - Fix label still clickable when `clickable=true`. [#422](https://github.com/NightCatSama/vue-slider-component/issues/422)
+
+## v3.0.44
+
+> `2019-11-29`
+
+### 🐞 Bug Fixes
+  - Fixing `will-change` will blur tooltips. [#418](https://github.com/NightCatSama/vue-slider-component/issues/418)
+
+## v3.0.43
+
+> `2019-11-14`
+
+### 🐞 Bug Fixes
+  - Fix `minRange`, `maxRange` cannot be calculated correctly. [#414](https://github.com/NightCatSama/vue-slider-component/issues/414)
+
+## v3.0.42
+
+> `2019-10-03`
+
+### 🐞 Bug Fixes
+  - Can't scroll on mobile devices. [#413](https://github.com/NightCatSama/vue-slider-component/issues/413)
+
+## v3.0.41
+
+> `2019-09-27`
+
+### 🎉 Feature
+  - Add Prop `dragOnClick` to allow the user to drag the slider directly when pressing the process. [PR#404](https://github.com/NightCatSama/vue-slider-component/pull/404)
+
+## v3.0.40
+
+> `2019-09-01`
+
+### 🎉 Feature
+  - Slot `process` add parameter `index`.
+
+## v3.0.39
+
+> `2019-08-28`
+
+### 🐞 Bug Fixes
+  - Keyboard control is abnormal with `included = true`. [#395](https://github.com/NightCatSama/vue-slider-component/issues/395)
+
+## v3.0.38
+
+> `2019-08-13`
+
+### 🐞 Bug Fixes
+  - `useKeyboard` does not work. [#389](https://github.com/NightCatSama/vue-slider-component/issues/389)
+
+## v3.0.37
+
+> `2019-08-13`
+
+### 🎉 Feature
+  - Export mark component and dot component.
+  - Support `default` slot.
+
+## v3.0.35
+
+> `2019-08-12`
+
+### 🐞 Bug Fixes
+  - Remove `.vue-slider-sr-only`. [#68](https://github.com/NightCatSama/vue-slider-component/issues/68)
+
+## v3.0.34
+
+> `2019-08-04`
+
+### 🐞 Bug Fixes
+  - Compatible screen reader.
+  - The cursor does not display the disabled flag when `disabled: true`
+
+## v3.0.33
+
+> `2019-06-27`
+
+### 🎉 Feature
+  - Add prop `keydownHook`. [#377](https://github.com/NightCatSama/vue-slider-component/issues/377)
+
+### 🐞 Bug Fixes
+  - Tooltip is not displayed correctly in lazy mode. [#375](https://github.com/NightCatSama/vue-slider-component/issues/375)
+
 ## v3.0.32
 
 > `2019-06-04`

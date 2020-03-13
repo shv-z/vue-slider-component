@@ -2,7 +2,6 @@ $tooltipGap: 10px;
 
 .vue-slider-dot {
   position: absolute;
-  will-change: transform;
   transition: all 0s;
   z-index: 5;
 
@@ -17,6 +16,10 @@ $tooltipGap: 10px;
 .vue-slider-dot-tooltip {
   position: absolute;
   visibility: hidden;
+
+  @at-root .vue-slider-dot-hover:hover & {
+    visibility: visible;
+  }
 
   &-show {
     visibility: visible;

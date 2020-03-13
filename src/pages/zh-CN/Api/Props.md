@@ -76,7 +76,7 @@
 
 ### direction
 
-- **类型**：`'ltr' | 'rtl' | 'ttb' | 'bbt'`
+- **类型**：`'ltr' | 'rtl' | 'ttb' | 'btt'`
 
 - **默认值**：`ltr`
 
@@ -86,7 +86,7 @@
 
   `ltr` 的意思是 Left to Right，其他同理。
 
-  当值为 `ltr` 或者 `rtl` 时为水平方向，为 `ttb` 或 `bbt` 时为垂直方向。
+  当值为 `ltr` 或者 `rtl` 时为水平方向，为 `ttb` 或 `btt` 时为垂直方向。
 
   ::: warning
     垂直方向时，需给定组件一个高度，否则会无法正常渲染。
@@ -162,6 +162,22 @@
 
   是否允许点击更改值。
 
+### dragOnClick
+
+::: version
+  3.0.41+ 新增
+:::
+
+- **类型**: `boolean`
+
+- **默认值**: `false`
+
+- **用法**:
+
+  是否允许在点击进度条时可直接拖拽滑块。
+
+- **参考**：<router-link :to="$route.meta.lang + 'basics/simple?hash=点击时拖拽'">一般用法 > 点击时拖拽</router-link>
+
 ### duration
 
 - **类型**：`number`
@@ -210,9 +226,9 @@
 
 ### tooltip
 
-- **类型**：`'none' | 'always' | 'focus'`
+- **类型**：`'none' | 'always' | 'hover' | 'focus' | 'active'`
 
-- **默认值**：`'focus'`
+- **默认值**：`'active'`
 
 - **用法**：
 
@@ -222,7 +238,11 @@
 
   当值为 `always` 时，Tooltip 会始终显示；
 
+  当值为 `hover` 时，Tooltip 会在鼠标悬停在滑块上时显示；
+
   当值为 `focus` 时，仅当滑块获得焦点时，Tooltip 才会显示。且当 `useKeyboard` 为 `true` 时，拖拽结束仍会获得焦点。
+
+  当值为 `active` 时，同时具有 `hover` 和 `focus` 功能；
 
 - **参考**：<router-link :to="$route.meta.lang + 'basics/tooltip?hash=tooltip'">工具提示 > tooltip</router-link>
 
@@ -279,6 +299,30 @@
 - **用法**：
 
   键盘控制，当值为 `true` 时，拖拽结束滑块仍然获取焦点。
+
+### keydownHook
+
+::: version
+  3.0.33+ 新增
+:::
+
+- **类型**: `(e: KeyboardEvent) => HandleFunction | boolean`
+
+  ```ts
+  // @参数 {index} 当前激活的滑块索引
+  // @返回 新的索引
+  type HandleFunction = (index: number) => number
+  ```
+
+- **默认值**: `undefined`
+
+- **用法**:
+
+  键盘控制的钩子函数。
+
+  如果返回 `false`，则不进行任何操作。
+
+  如果返回 `true`，则进行内置的[默认操作](https://github.com/NightCatSama/vue-slider-component/blob/master/lib/utils/index.ts)。
 
 ### enableCross
 
@@ -395,7 +439,7 @@
   ```ts
   interface DotOption {
     disabled: boolean
-    tooltip: 'none' | 'always' | 'focus'
+    tooltip: 'none' | 'always' | 'hover' | 'focus' | 'active'
     min: Value
     max: Value
     style: Object

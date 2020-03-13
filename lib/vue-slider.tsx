@@ -17,7 +17,7 @@ import {
 import VueSliderDot from './vue-slider-dot'
 import VueSliderMark from './vue-slider-mark'
 
-import { getSize, getPos, getKeyboardHandleFunc } from './utils'
+import { getSize, getPos, getKeyboardHandleFunc, HandleFunction } from './utils'
 import Decimal from './utils/decimal'
 import Control, { ERROR_TYPE } from './utils/control'
 import State, { StateMap } from './utils/state'
@@ -26,8 +26,8 @@ import './styles/slider.scss'
 
 export const SliderState: StateMap = {
   None: 0,
-  Drag: 1 << 0,
-  Focus: 2 << 0,
+  Drag: 1 << 1,
+  Focus: 1 << 2,
 }
 
 const DEFAULT_SLIDER_SIZE = 4
@@ -42,7 +42,6 @@ const DEFAULT_SLIDER_SIZE = 4
     VueSliderDot,
     VueSliderMark,
   },
-  inheritAttrs: false,
 })
 export default class VueSlider extends Vue {
   control!: Control
@@ -97,6 +96,9 @@ export default class VueSlider extends Vue {
   @Prop({ type: Boolean, default: true })
   clickable!: boolean
 
+  @Prop({ type: Boolean, default: false })
+  dragOnClick!: boolean
+
   // The duration of the slider slide, Unit second
   @Prop({ type: Number, default: 0.5 })
   duration!: number
@@ -108,8 +110,8 @@ export default class VueSlider extends Vue {
 
   @Prop({
     type: String,
-    validator: val => ['none', 'always', 'focus'].indexOf(val) > -1,
-    default: 'focus',
+    validator: val => ['none', 'always', 'focus', 'hover', 'active'].indexOf(val) > -1,
+    default: 'active',
   })
   tooltip!: TooltipProp
 
@@ -128,6 +130,10 @@ export default class VueSlider extends Vue {
   // Keyboard control
   @Prop({ type: Boolean, default: false })
   useKeyboard?: boolean
+
+  // Keyboard controlled hook function
+  @Prop(Function)
+  keydownHook!: (e: KeyboardEvent) => HandleFunction | boolean
 
   // Whether to allow sliders to cross, only in range mode
   @Prop({ type: Boolean, default: true })
@@ -221,7 +227,7 @@ export default class VueSlider extends Vue {
   }
 
   get processArray(): Process[] {
-    return this.control.processArray.map(([start, end, style]) => {
+    return this.control.processArray.map(([start, end, style], index) => {
       if (start > end) {
         /* tslint:disable:semicolon */
         ;[start, end] = [end, start]
@@ -230,6 +236,7 @@ export default class VueSlider extends Vue {
       return {
         start,
         end,
+        index,
         style: {
           [this.isHorizontal ? 'height' : 'width']: '100%',
           [this.isHorizontal ? 'top' : 'left']: 0,
@@ -307,7 +314,7 @@ export default class VueSlider extends Vue {
       index,
       value: this.control.dotsValue[index],
       focus: this.states.has(SliderState.Focus) && this.focusDotIndex === index,
-      disabled: false,
+      disabled: this.disabled,
       style: this.dotStyle,
       ...((Array.isArray(this.dotOptions) ? this.dotOptions[index] : this.dotOptions) || {}),
     }))
@@ -326,7 +333,7 @@ export default class VueSlider extends Vue {
 
   @Watch('value')
   onValueChanged() {
-    if (!this.states.has(SliderState.Drag) && this.isNotSync) {
+    if (this.control && !this.states.has(SliderState.Drag) && this.isNotSync) {
       this.control.setValue(this.value)
     }
   }
@@ -424,10 +431,6 @@ export default class VueSlider extends Vue {
     })
   }
 
-  isDisabledByDotIndex(index: number): boolean {
-    return this.dots[index].disabled
-  }
-
   private syncValueByPos() {
     const values = this.control.dotsValue
     if (this.isDiff(values, Array.isArray(this.value) ? this.value : [this.value])) {
@@ -467,6 +470,22 @@ export default class VueSlider extends Vue {
     const prevDot = this.dots[this.focusDotIndex - 1]
     const nextDot = this.dots[this.focusDotIndex + 1]
     return [prevDot ? prevDot.pos : -Infinity, nextDot ? nextDot.pos : Infinity]
+  }
+
+  private dragStartOnProcess(e: MouseEvent | TouchEvent) {
+    if (this.dragOnClick) {
+      this.setScale()
+      const pos = this.getPosByEvent(e)
+      const index = this.control.getRecentDot(pos)
+      if (this.dots[index].disabled) {
+        return
+      }
+      this.dragStart(index)
+      this.control.setDotPos(pos, this.focusDotIndex)
+      if (!this.lazy) {
+        this.syncValueByPos()
+      }
+    }
   }
 
   private dragStart(index: number) {
@@ -514,18 +533,17 @@ export default class VueSlider extends Vue {
     if (!this.states.has(SliderState.Drag)) {
       return false
     }
-    if (this.lazy) {
-      this.syncValueByPos()
-    }
 
     setTimeout(() => {
+      if (this.lazy) {
+        this.syncValueByPos()
+      }
       if (this.included && this.isNotSync) {
         this.control.setValue(this.value)
       } else {
         // Sync slider position
         this.control.syncDotsPos()
       }
-
       this.states.delete(SliderState.Drag)
       // If useKeyboard is true, keep focus status after dragging
       if (!this.useKeyboard) {
@@ -547,7 +565,7 @@ export default class VueSlider extends Vue {
   }
 
   private clickHandle(e: MouseEvent | TouchEvent) {
-    if (!this.clickable) {
+    if (!this.clickable || this.disabled) {
       return false
     }
     if (this.states.has(SliderState.Drag)) {
@@ -591,7 +609,7 @@ export default class VueSlider extends Vue {
 
   setValueByPos(pos: number) {
     const index = this.control.getRecentDot(pos)
-    if (this.isDisabledByDotIndex(index)) {
+    if (this.disabled || this.dots[index].disabled) {
       return false
     }
     this.focusDotIndex = index
@@ -616,17 +634,38 @@ export default class VueSlider extends Vue {
       return false
     }
 
+    const isInclude = this.included && this.marks
     const handleFunc = getKeyboardHandleFunc(e, {
       direction: this.direction,
-      max: this.control.total,
+      max: isInclude ? this.control.markList.length - 1 : this.control.total,
       min: 0,
+      hook: this.keydownHook,
     })
 
     if (handleFunc) {
       e.preventDefault()
-      const index = this.control.getIndexByValue(this.control.dotsValue[this.focusDotIndex])
-      const newIndex = handleFunc(index)
-      const pos = this.control.parseValue(this.control.getValueByIndex(newIndex))
+      let newIndex = -1
+      let pos = 0
+      if (isInclude) {
+        this.control.markList.some((mark, index) => {
+          if (mark.value === this.control.dotsValue[this.focusDotIndex]) {
+            newIndex = handleFunc(index)
+            return true
+          }
+          return false
+        })
+        if (newIndex < 0) {
+          newIndex = 0
+        } else if (newIndex > this.control.markList.length - 1) {
+          newIndex = this.control.markList.length - 1
+        }
+        pos = this.control.markList[newIndex].pos
+      } else {
+        newIndex = handleFunc(
+          this.control.getIndexByValue(this.control.dotsValue[this.focusDotIndex]),
+        )
+        pos = this.control.parseValue(this.control.getValueByIndex(newIndex))
+      }
       this.isCrossDot(pos)
       this.control.setDotPos(pos, this.focusDotIndex)
       this.syncValueByPos()
@@ -656,8 +695,10 @@ export default class VueSlider extends Vue {
         ref="container"
         class={this.containerClasses}
         style={this.containerStyles}
-        aria-hidden={true}
         onClick={this.clickHandle}
+        onTouchstart={this.dragStartOnProcess}
+        onMousedown={this.dragStartOnProcess}
+        {...this.$attrs}
       >
         {/* rail */}
         <div class="vue-slider-rail" style={this.railStyle}>
@@ -689,7 +730,7 @@ export default class VueSlider extends Vue {
                     stepActiveStyle={this.stepActiveStyle}
                     labelStyle={this.labelStyle}
                     labelActiveStyle={this.labelActiveStyle}
-                    onPressLabel={(pos: number) => this.setValueByPos(pos)}
+                    onPressLabel={(pos: number) => this.clickable && this.setValueByPos(pos)}
                   >
                     {this.renderSlot<Mark>('step', mark, null)}
                     {this.renderSlot<Mark>('label', mark, null)}
@@ -738,17 +779,8 @@ export default class VueSlider extends Vue {
               {this.renderSlot<Dot>('tooltip', dot, null)}
             </vue-slider-dot>
           ))}
+          {this.renderSlot<any>('default', null, null, true)}
         </div>
-        {/* Support screen readers */}
-        {this.dots.length === 1 && !this.data ? (
-          <input
-            class="vue-slider-sr-only"
-            type="range"
-            value={this.value}
-            min={this.min}
-            max={this.max}
-          />
-        ) : null}
       </div>
     )
   }

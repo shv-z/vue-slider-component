@@ -3,12 +3,7 @@
   box-sizing: content-box;
   user-select: none;
   display: block;
-  -ms-touch-action: none;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-
-  @at-root &-disabled {
-    pointer-events: none;
-  }
 }
 
 .vue-slider-rail {
@@ -21,12 +16,4 @@
 .vue-slider-process {
   position: absolute;
   z-index: 1;
-}
-
-.vue-slider-sr-only {
-  clip: rect(1px, 1px, 1px, 1px);
-  height: 1px;
-  width: 1px;
-  overflow: hidden;
-  position: absolute !important;
 }
